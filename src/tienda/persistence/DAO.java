@@ -8,6 +8,7 @@ package tienda.persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,6 +22,7 @@ public abstract class DAO {
     private Statement sentencia = null;
     private Connection conexion = null;
     protected ResultSet resultado = null;
+    private PreparedStatement sentenciaPreparada = null;
     
     private final String USER = "root";
     private final String PASSWORD = "root1234";
@@ -68,13 +70,38 @@ public abstract class DAO {
         }
     }
     
-    protected void consultarBase(String url){
+    protected void consultarBase(String url) throws Exception{
         try {
             conectarBase();
             sentencia = conexion.createStatement();
             resultado = sentencia.executeQuery(url);
         } catch (Exception e) {
+            throw e;
         }
     }
     
+    protected void consultaPreparada(String url, double dato1, double dato2) throws Exception{
+        try {
+            conectarBase();
+            sentenciaPreparada = conexion.prepareStatement(url);
+            sentenciaPreparada.setDouble(1, dato1);
+            sentenciaPreparada.setDouble(2, dato2);
+            resultado = sentenciaPreparada.executeQuery();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    
+    protected void consultaPreparadaStringAmplia(String url, String cadena1) throws Exception{
+        try {
+            String palabraABuscar = "%"+cadena1+"%";
+            conectarBase();
+            sentenciaPreparada = conexion.prepareStatement(url);
+            sentenciaPreparada.setString(1, palabraABuscar);
+            resultado = sentenciaPreparada.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

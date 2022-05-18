@@ -74,7 +74,7 @@ public final class ProductoDAO extends DAO{
     
     public ArrayList<Producto> listarProductos() throws Exception{
         try {
-            String sql = "SELECT nombre, precio, codigo_fabricante FROM producto";
+            String sql = "SELECT nombre, precio, codigo_fabricante, codigo FROM producto";
             consultarBase(sql);
             ArrayList<Producto> productos = new ArrayList();
             Producto producto = null;
@@ -82,7 +82,8 @@ public final class ProductoDAO extends DAO{
                 producto = new Producto(); 
                 producto.setNombre(resultado.getString(1));
                 producto.setPrecio(resultado.getDouble(2));
-                producto.setIdFabricante(resultado.getInt(3));              
+                producto.setIdFabricante(resultado.getInt(3)); 
+                producto.setCodigo(resultado.getInt(4));
                 productos.add(producto);
             }
             desconectarBase();
@@ -94,10 +95,11 @@ public final class ProductoDAO extends DAO{
         }
     }
     
-    public ArrayList<Producto> listarNombreYPrecioProducto() throws Exception{
+
+    public ArrayList<Producto> listarProductoPorRangoDePrecio(double menor, double mayor) throws Exception{
         try {
-            String sql = "SELECT nombre, precio FROM producto";
-            consultarBase(sql);
+            String sql = "SELECT nombre, precio FROM producto WHERE precio BETWEEN ? AND ?;";
+            consultaPreparada(sql, menor, mayor);
             ArrayList<Producto> productos = new ArrayList();
             Producto producto = null;
             while (resultado.next()) {             
@@ -111,7 +113,51 @@ public final class ProductoDAO extends DAO{
         } catch (Exception e) {
             e.printStackTrace();
             desconectarBase();
-            throw new Exception("Error de sistema");
+            throw new Exception("Error del fuckin system");
         }
     }
+    
+    public ArrayList<Producto> buscarProductosQueContienen(String clave) throws Exception{
+        try {
+            String sql = "SELECT nombre, precio FROM producto WHERE nombre LIKE ?;";
+            consultaPreparadaStringAmplia(sql, clave);
+            ArrayList<Producto> productos = new ArrayList();
+            Producto producto = null;
+            while (resultado.next()) {             
+                producto = new Producto(); 
+                producto.setNombre(resultado.getString(1));
+                producto.setPrecio(resultado.getDouble(2));              
+                productos.add(producto);
+            }
+            desconectarBase();
+            return productos;
+        } catch (Exception e) {
+            e.printStackTrace();
+            desconectarBase();
+            throw new Exception("Error del fuckin system");
+        }
+    }
+
+    public ArrayList<Producto> buscarMasBarato() throws Exception{
+        try {
+            conectarBase();
+            String sql = "SELECT * FROM producto WHERE precio = (SELECT min(precio) FROM producto);";
+            consultarBase(sql);
+            ArrayList<Producto> productos = new ArrayList();
+            Producto producto;
+            while (resultado.next()) {                
+                producto  = new Producto();
+                producto.setCodigo(resultado.getInt(1));
+                producto.setNombre(resultado.getString(2));
+                producto.setPrecio(resultado.getDouble(3));
+                producto.setIdFabricante(resultado.getInt(4));
+                productos.add(producto);
+            }
+            desconectarBase();
+            return productos;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+ }
 }

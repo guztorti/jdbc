@@ -16,9 +16,16 @@ public class Tienda {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        Menu menu = new Menu();
-        menu.menu();
+    public static void main(String[] args) throws Exception {
+        Menu menu = null;
+        try {
+            menu = new Menu();
+            menu.menu();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
     
 }

@@ -21,6 +21,7 @@ public class Menu {
         Scanner scn = new Scanner(System.in).useDelimiter("\n");
         char opcion;
         ProductoServicio ps = new ProductoServicio();
+        FabricanteServicio fs = new FabricanteServicio();
         String mensaje = "a) Lista el nombre de todos los productos que hay en la tabla producto.\n"
                 + "b) Lista los nombres y los precios de todos los productos de la tabla producto.\n"
                 + "c) Listar aquellos productos que su precio esté entre 120 y 202.\n"
@@ -42,16 +43,22 @@ public class Menu {
                         ps.mostrarNombreYPrecio();
                         break;
                     case 'c':
+                        ps.listarPorRangoDePrecios(120d, 202d);
                         break;
                     case 'd':
+                        ps.listarProductosQueContengan("Port_til");
                         break;
                     case 'e':
+                        ps.listarProductoMasBarato();
                         break;
                     case 'f':
+                        ps.crearProducto("Mother Asus extra Durable", 89.38, 5);
                         break;
                     case 'g':
+                        fs.crearFabricante("EGG hardware");
                         break;
                     case 'h':
+                        ps.modificarProducto("Mother Asus extra Durable", 89.38, "Asus");
                         break;
                     case 'z':
                         System.out.println("Gracias y hasta pronto");

@@ -60,8 +60,10 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto{ nombre=" + nombre + ", precio=" + precio + ", idFabricante=" + idFabricante + "}\n";
+        return "{Producto{" + "codigo=" + codigo + ", nombre=" + nombre + ", precio=" + precio + ", idFabricante=" + idFabricante + "}\n";
     }
+
+    
     
     
     

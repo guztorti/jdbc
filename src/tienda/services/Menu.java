@@ -52,7 +52,7 @@ public class Menu {
                         ps.listarProductoMasBarato();
                         break;
                     case 'f':
-                        ps.crearProducto("Mother Asus extra Durable", 89.38, 5);
+                        ps.ingresarProductoALaBD("Mother Asus extra Durable", 89.38, 5);
                         break;
                     case 'g':
                         fs.crearFabricante("EGG hardware");

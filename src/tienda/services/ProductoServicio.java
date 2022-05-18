@@ -5,6 +5,7 @@
  */
 package tienda.services;
 
+import tienda.instances.Fabricante;
 import tienda.instances.Producto;
 import tienda.persistence.FabricanteDAO;
 import tienda.persistence.ProductoDAO;
@@ -16,17 +17,21 @@ import tienda.persistence.ProductoDAO;
 public class ProductoServicio {
 
     private ProductoDAO dao;
-    private FabricanteDAO fcnte = new FabricanteDAO();
+    private FabricanteDAO fcnte;
 
     public ProductoServicio() {
         dao = new ProductoDAO();
+        fcnte  = new FabricanteDAO();
     }
 
-    public final void crearProducto(String nombre, double precio, int idFabricante) {
+    public final void crearProducto(String nombre, double precio, int idFabricante) throws Exception {
         try {
             //validar datos
             if (nombre != null) {
                 throw new Exception("El nombre no puede ser vacío");
+            }
+            if (dao.buscarProductoPorNombre(nombre)!=null) {
+                throw new Exception("Ya existe un producto con ese nombre");
             }
             if (precio < 0) {
                 throw new Exception("El precio debe ser un número positivo (o 0)");
@@ -41,6 +46,8 @@ public class ProductoServicio {
             producto.setIdFabricante(idFabricante);
             dao.guardarProducto(producto);
         } catch (Exception e) {
+            
+            throw e;
         }
     }
 
@@ -69,7 +76,9 @@ public class ProductoServicio {
     //Listar aquellos productos que su precio esté entre 120 y 202.
     public void listarPorRangoDePrecios(Double menor, Double mayor) throws Exception {
         try {
-            System.out.println(dao.listarProductoPorRangoDePrecio(menor, mayor));
+            for (Producto e : dao.listarProductoPorRangoDePrecio(menor, mayor)) {
+                System.out.println(e);
+            }
         } catch (Exception e) {
         }
     }
@@ -112,17 +121,21 @@ public class ProductoServicio {
     public void modificarProducto(String nombre, double precio, String fabricante) throws Exception{
 
         try {
+            if(dao.buscarProductoPorNombre(nombre) == null){
+                throw new Exception("El producto indicado no existe el la base de datos");
+            }
             Producto modificable = new Producto();
             modificable.setNombre(nombre);
             modificable.setPrecio(precio);
-            if(fcnte.buscarFabricantePorNombre(fabricante)==null){
+            Fabricante fab = new Fabricante();
+            fab = fcnte.buscarFabricantePorNombre(fabricante);
+            if(fab == null){
                 throw new Exception("El fabricante no está en la lista");
-            } 
-            modificable.setIdFabricante(fcnte.buscarFabricantePorNombre(nombre).getId());
-            
+            } else{
+            modificable.setIdFabricante(fab.getId());
+            }
             dao.modificarProducto(modificable);
         } catch (Exception e) {
-            e.printStackTrace();
             throw e;
         }
     }
